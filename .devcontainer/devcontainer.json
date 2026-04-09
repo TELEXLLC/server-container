@@ -1,0 +1,13 @@
+{
+  "name": "PHP Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/php:1.2",
+  "forwardPorts": [80],
+  "postCreateCommand": "php -v",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client"
+      ]
+    }
+  }
+}

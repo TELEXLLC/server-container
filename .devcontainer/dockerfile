@@ -1,0 +1,41 @@
+FROM mcr.microsoft.com/devcontainers/php:1.2
+
+# Install Apache and SSL tools
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    openssl \
+    libapache2-mod-php8.1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create SSL directory
+RUN mkdir -p /etc/ssl/private /etc/ssl/certs
+
+# Generate self-signed certificate
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/server.key \
+    -out /etc/ssl/certs/server.crt \
+    -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
+
+# Configure Apache for HTTPS
+RUN a2enmod ssl rewrite
+
+# Create custom Apache config
+RUN cat > /etc/apache2/sites-available/000-default-ssl.conf << 'EOF'
+<VirtualHost *:443>
+    ServerName localhost
+    DocumentRoot /var/www/html
+
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/server.crt
+    SSLCertificateKeyFile /etc/ssl/private/server.key
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+# Enable the SSL site
+RUN a2ensite 000-default-ssl
+
+# Start Apache on container startup
+CMD ["apache2ctl", "-D", "FOREGROUND"]

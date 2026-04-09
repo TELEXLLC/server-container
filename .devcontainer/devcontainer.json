@@ -1,8 +1,8 @@
 {
-  "name": "PHP Dev Container",
+  "name": "PHP HTTPS Dev Container",
   "image": "mcr.microsoft.com/devcontainers/php:1.2",
-  "forwardPorts": [80],
-  "postCreateCommand": "php -v",
+  "forwardPorts": [80, 443],
+  "postCreateCommand": "apt-get update && apt-get install -y openssl",
   "customizations": {
     "vscode": {
       "extensions": [

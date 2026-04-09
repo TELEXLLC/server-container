@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Request Logger</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .log { background: #f4f4f4; padding: 10px; margin-top: 20px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+    <h1>Test PHP Request Logger</h1>
+    
+    <button onclick="logRequest()">Send Test Request</button>
+
+    <div class="log" id="status">
+        Waiting for request...
+    </div>
+
+    <script>
+        async function logRequest() {
+            // Set some cookies manually
+            document.cookie = "testCookie=testValue; path=/";
+            
+            // Set some query parameters
+            const params = new URLSearchParams();
+            params.append('username', 'JohnDoe');
+            params.append('action', 'login');
+
+            const url = `/log-request?${params.toString()}`;
+
+            const response = await fetch(url, {
+                method: 'GET', // Using GET for query params, or POST for body data
+                headers: {
+                    'X-Custom-Header': 'CustomValue123',
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            document.getElementById('status').innerText = 
+                `Status: ${response.status} - Message: ${data.message}`;
+        }
+    </script>
+</body>
+</html>
